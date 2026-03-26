@@ -80,7 +80,7 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             "open_virtual_joystick",
-            default_value="true",
+            default_value="false",
             description="Open the virtual joystick page in Firefox",
         ),
         DeclareLaunchArgument(
