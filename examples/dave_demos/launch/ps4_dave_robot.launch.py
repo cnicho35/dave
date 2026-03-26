@@ -1,11 +1,12 @@
 from launch import LaunchDescription
 from launch.actions import (
+    AppendEnvironmentVariable,
     DeclareLaunchArgument,
     IncludeLaunchDescription,
     OpaqueFunction,
 )
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
+from launch.substitutions import EnvironmentVariable, LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
@@ -57,6 +58,33 @@ def launch_setup(context, *args, **kwargs):
 
 
 def generate_launch_description():
+    # Prepend ardupilot_gazebo build dir so libArduPilotPlugin.so is found by Gazebo.
+    # These mirror the exports recommended in extras/ardusub-ubuntu-install-local.sh.
+    set_plugin_path = AppendEnvironmentVariable(
+        name="GZ_SIM_SYSTEM_PLUGIN_PATH",
+        value=PathJoinSubstitution(
+            [EnvironmentVariable("HOME"), "ardupilot_gazebo", "build"]
+        ),
+        prepend=True,
+    )
+
+    # GZ_SIM_RESOURCE_PATH needs both models and worlds prepended.
+    # Two calls with prepend=True produce: models:worlds:<existing>
+    set_resource_path_worlds = AppendEnvironmentVariable(
+        name="GZ_SIM_RESOURCE_PATH",
+        value=PathJoinSubstitution(
+            [EnvironmentVariable("HOME"), "ardupilot_gazebo", "worlds"]
+        ),
+        prepend=True,
+    )
+    set_resource_path_models = AppendEnvironmentVariable(
+        name="GZ_SIM_RESOURCE_PATH",
+        value=PathJoinSubstitution(
+            [EnvironmentVariable("HOME"), "ardupilot_gazebo", "models"]
+        ),
+        prepend=True,
+    )
+
     args = [
         DeclareLaunchArgument(
             "z",
@@ -90,4 +118,8 @@ def generate_launch_description():
         ),
     ]
 
-    return LaunchDescription(args + [OpaqueFunction(function=launch_setup)])
+    return LaunchDescription(
+        [set_plugin_path, set_resource_path_worlds, set_resource_path_models]
+        + args
+        + [OpaqueFunction(function=launch_setup)]
+    )
