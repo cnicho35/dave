@@ -115,3 +115,7 @@ SERVO3_FUNCTION 35
 SERVO4_FUNCTION 36
 SERVO5_FUNCTION 37
 SERVO6_FUNCTION 38
+
+# Disable pre-arm checks for SITL so that arming succeeds regardless of
+# throttle position.  Real-hardware configurations should re-enable this.
+ARMING_CHECK 0
