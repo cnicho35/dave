@@ -11,8 +11,9 @@ from std_msgs.msg import Bool
 
 AXIS_SWAY = 0
 AXIS_FWD = 1
-AXIS_YAW = 4
-AXIS_HEAVE = 5
+AXIS_YAW = 3
+AXIS_HEAVE_POS = 5
+AXIS_HEAVE_NEG = 2
 
 BTN_Z_HOLD_OFF = 0
 BTN_SCALE_UP = 1
@@ -22,14 +23,10 @@ BTN_ARM_OFF = 8
 BTN_ARM_ON = 9
 
 DEADZONE = 0.08
+DEADZONE_YAW = 0.20
 DEADZONE_HEAVE = 0.18
 RATE_HZ = 20.0
 TIMEOUT_SEC = 0.3
-
-# Minimum per-axis delta required to consider a Joy message as intentional input.
-# This prevents PS4 analog triggers (which rest at -1.0, not 0.0) from
-# perpetually marking the joystick as "active" and sending non-neutral throttle.
-AXIS_DELTA_THRESHOLD = 0.05
 
 STABILIZE_MODE = "STABILIZE"
 DEPTH_HOLD_MODE = "ALT_HOLD"
@@ -214,41 +211,14 @@ class ArduSubManualControl(Node):
         self.get_logger().info("Auto-arm: sending arm command and requesting STABILIZE mode")
         self._call_arm(True)
         self._call_set_mode(STABILIZE_MODE)
-
     def _update_input_state(self, source, msg):
-        state = self.input_state[source]
-        new_axes = list(msg.axes)
-        new_buttons = list(msg.buttons)
-        prev_axes = state["axes"]
+            state = self.input_state[source]
+            state["axes"] = list(msg.axes)
+            state["buttons"] = list(msg.buttons)
 
-        # Delta-based activity detection:
-        # Only mark input as "active" when axes change by a meaningful amount
-        # or a button is pressed.  This prevents hardware triggers that rest at
-        # a non-zero position (e.g. PS4 R2/L2 resting at -1.0) from being
-        # treated as perpetual intentional input, which would keep the joystick
-        # permanently "active" and send non-neutral throttle at all times.
-        if prev_axes:
-            # Use the shorter length to avoid index-out-of-range issues if
-            # the number of axes changes between messages (e.g. device hot-plug).
-            # Any new axes beyond the baseline are conservatively ignored.
-            axes_moved = len(new_axes) != len(prev_axes) or any(
-                abs(n - p) > AXIS_DELTA_THRESHOLD
-                for n, p in zip(new_axes, prev_axes)
-            )
-        else:
-            # First message: record as baseline without marking active so that
-            # trigger resting values (-1.0) are not treated as movement.
-            state["axes"] = new_axes
-            state["buttons"] = new_buttons
-            return
+            if any(abs(axis) > 1e-6 for axis in state["axes"]) or any(state["buttons"]):
+                state["activity_time"] = self.get_clock().now()
 
-        any_button = any(new_buttons)
-
-        state["axes"] = new_axes
-        state["buttons"] = new_buttons
-
-        if axes_moved or any_button:
-            state["activity_time"] = self.get_clock().now()
 
     def _select_active_input(self):
         now = self.get_clock().now()
@@ -415,10 +385,19 @@ class ArduSubManualControl(Node):
         sway *= self.throttle_scale
 
         heave = THROTTLE_NEUTRAL
-        heave += -dz(self._get_axis(AXIS_HEAVE), DEADZONE_HEAVE) * THROTTLE_RANGE
+        # PS4 triggers rest at -1.0 (not 0.0); remap [-1, 1] → [0, 1] so that
+        # an untouched trigger produces exactly THROTTLE_NEUTRAL (500).
+        raw_heave_pos = self._get_axis(AXIS_HEAVE_POS) + 1
+        raw_heave_neg = self._get_axis(AXIS_HEAVE_NEG) + 1 
+        remapped_heave = (raw_heave_pos + -raw_heave_neg) / 2.0  # 0.0 at rest, 1.0 fully pressed
+        heave += -dz(remapped_heave , DEADZONE_HEAVE)* THROTTLE_RANGE
 
-        yaw = -dz(self._get_axis(AXIS_YAW), DEADZONE) * MAX_MANUAL
+        # Use a wider deadzone for yaw and force neutral until armed so that
+        # ArduSub's "RC4 is not neutral" pre-arm check always passes.
+        yaw = -dz(self._get_axis(AXIS_YAW), DEADZONE_YAW) * MAX_MANUAL
         yaw *= self.throttle_scale
+        if not self.armed:
+            yaw = 0.0
 
         self._publish_manual(
             clamp(forward, -MAX_MANUAL, MAX_MANUAL),
