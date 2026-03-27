@@ -60,30 +60,32 @@ def launch_setup(context, *args, **kwargs):
 
 
 def generate_launch_description():
-    # Prepend ardupilot_gazebo paths so Gazebo finds libArduPilotPlugin.so (build dir),
-    # the BlueROV2 mesh resources (models dir), and the ocean shader assets (worlds dir).
-    set_exec_path = SetEnvironmentVariable(
-        name="PATH",
-        value=f"/opt/ardusub_ws/ardupilot/build/sitl/bin:{os.getenv('PATH', '')}",
-    )
-    set_plugin_path = SetEnvironmentVariable(
-        name="GZ_SIM_SYSTEM_PLUGIN_PATH",
-        value=f"/opt/ardusub_ws/ardupilot_gazebo/build:{os.getenv('GZ_SIM_SYSTEM_PLUGIN_PATH', '')}",
-    )
-    # Both models and worlds must be in a single assignment; two separate
-    # SetEnvironmentVariable calls for the same variable each read the original
-    # os.getenv() value (captured at import time) so the second one would
-    # silently overwrite the first - causing the worlds path to be dropped and
-    # the ShaderParam ocean-surface plugin to fail, leaving the BlueROV2 hidden
-    # beneath an opaque water surface.
+    # Prepend ardupilot_gazebo build dir so libArduPilotPlugin.so is found by Gazebo.
+    # These mirror the exports recommended in extras/ardusub-ubuntu-install-local.sh.
+            # Log what we're setting for debugging
+
+        # Set environment variable for the rest of this launch context
+        
+    set_exec_path =     SetEnvironmentVariable(
+            name='PATH',
+            value=f"/opt/ardusub_ws/ardupilot/build/sitl/bin:{os.getenv('PATH', '')}"
+        )
+    set_resource_path_plugins = SetEnvironmentVariable(
+            name='GZ_SIM_SYSTEM_PLUGIN_PATH',
+            value=f"/opt/ardusub_ws/ardupilot_gazebo/build:{os.getenv('GZ_SIM_SYSTEM_PLUGIN_PATH', '')}"
+        )
     set_resource_path = SetEnvironmentVariable(
         name="GZ_SIM_RESOURCE_PATH",
         value=(
             f"/opt/ardusub_ws/ardupilot_gazebo/models"
             f":/opt/ardusub_ws/ardupilot_gazebo/worlds"
             f":{os.getenv('GZ_SIM_RESOURCE_PATH', '')}"
-        ),
-    )
+        )
+)
+
+    
+
+
 
     args = [
         DeclareLaunchArgument(
@@ -112,6 +114,16 @@ def generate_launch_description():
             description="Open the virtual joystick page in Firefox",
         ),
         DeclareLaunchArgument(
+            "use_web_joystick",
+            default_value="false",
+            description="",
+        ),
+       DeclareLaunchArgument(
+            "use_teleop",
+            default_value="true",
+            description="",
+        ),
+        DeclareLaunchArgument(
             "open_qgc",
             default_value="false",
             description="Launch QGroundControl",
@@ -119,7 +131,7 @@ def generate_launch_description():
     ]
 
     return LaunchDescription(
-        [set_exec_path, set_plugin_path, set_resource_path]
+        [set_exec_path,set_resource_path,set_resource_path_plugins]
         + args
         + [OpaqueFunction(function=launch_setup)]
     )
