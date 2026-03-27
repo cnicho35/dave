@@ -1,6 +1,6 @@
 from launch import LaunchDescription
 from launch.actions import (
-    AppendEnvironmentVariable,
+    SetEnvironmentVariable,
     DeclareLaunchArgument,
     IncludeLaunchDescription,
     OpaqueFunction,
@@ -10,11 +10,20 @@ from launch.substitutions import EnvironmentVariable, LaunchConfiguration, PathJ
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
+import os
+
 
 def launch_setup(context, *args, **kwargs):
     # PS4 controller joy node – reads the gamepad and publishes sensor_msgs/Joy
     # to /joy, which is the topic consumed by ardusub_manual_control.py to drive
     # the bluerov2 via MAVROS ManualControl messages.
+    
+    print("#"*10,"BEGIN ENV CHANGES", "#"*10)
+    print(os.getenv('PATH', ''))
+    print(os.getenv('GZ_SIM_RESOURCE_PATH', ''))
+    print(os.getenv('GZ_SIM_SYSTEM_PLUGIN_PATH', ''))
+    print("#"*10,"END ENV CHANGES", "#"*10)
+    
     joy_node = Node(
         package="joy",
         executable="joy_node",
@@ -60,30 +69,29 @@ def launch_setup(context, *args, **kwargs):
 def generate_launch_description():
     # Prepend ardupilot_gazebo build dir so libArduPilotPlugin.so is found by Gazebo.
     # These mirror the exports recommended in extras/ardusub-ubuntu-install-local.sh.
-    set_plugin_path = AppendEnvironmentVariable(
-        name="GZ_SIM_SYSTEM_PLUGIN_PATH",
-        value=PathJoinSubstitution(
-            [EnvironmentVariable("HOME"), "ardupilot_gazebo", "build"]
-        ),
-        prepend=True,
-    )
+            # Log what we're setting for debugging
 
-    # GZ_SIM_RESOURCE_PATH needs both models and worlds prepended.
-    # Two calls with prepend=True produce: models:worlds:<existing>
-    set_resource_path_worlds = AppendEnvironmentVariable(
-        name="GZ_SIM_RESOURCE_PATH",
-        value=PathJoinSubstitution(
-            [EnvironmentVariable("HOME"), "ardupilot_gazebo", "worlds"]
-        ),
-        prepend=True,
-    )
-    set_resource_path_models = AppendEnvironmentVariable(
-        name="GZ_SIM_RESOURCE_PATH",
-        value=PathJoinSubstitution(
-            [EnvironmentVariable("HOME"), "ardupilot_gazebo", "models"]
-        ),
-        prepend=True,
-    )
+        # Set environment variable for the rest of this launch context
+        
+    set_exec_path =     SetEnvironmentVariable(
+            name='PATH',
+            value=f"/opt/ardusub_ws/ardupilot/build/sitl/bin:{os.getenv('PATH', '')}"
+        )
+    set_resource_path_plugins = SetEnvironmentVariable(
+            name='GZ_SIM_SYSTEM_PLUGIN_PATH',
+            value=f"/opt/ardusub_ws/ardupilot_gazebo/build:{os.getenv('GZ_SIM_SYSTEM_PLUGIN_PATH', '')}"
+        )
+    set_resource_path_models = SetEnvironmentVariable(
+            name='GZ_SIM_RESOURCE_PATH',
+            value=f"/opt/ardusub_ws/ardupilot_gazebo/models:{os.getenv('GZ_SIM_RESOURCE_PATH', '')}"
+        )
+    set_resource_path_worlds = SetEnvironmentVariable(
+            name='GZ_SIM_RESOURCE_PATH',
+            value=f"/opt/ardusub_ws/ardupilot_gazebo/worlds:{os.getenv('GZ_SIM_RESOURCE_PATH', '')}"
+        )
+    
+
+
 
     args = [
         DeclareLaunchArgument(
@@ -119,7 +127,7 @@ def generate_launch_description():
     ]
 
     return LaunchDescription(
-        [set_plugin_path, set_resource_path_worlds, set_resource_path_models]
+        [set_exec_path,set_resource_path_worlds,set_resource_path_plugins, set_resource_path_models]
         + args
         + [OpaqueFunction(function=launch_setup)]
     )
