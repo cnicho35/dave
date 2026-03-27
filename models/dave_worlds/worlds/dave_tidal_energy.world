@@ -19,9 +19,7 @@
 <sdf version="1.8">
   <world name="dave_tidal_energy">
     <scene>
-      <!-- Underwater turquoise ambiance -->
-      <ambient>0.0 1.0 1.0 1.0</ambient>
-      <background>0.0 0.7 0.8 1.0</background>
+      <ambient>0.01 0.01 0.01 1.0</ambient>
       <sky>
         <clouds>
           <speed>12</speed>
@@ -48,8 +46,13 @@
       name="gz::sim::systems::SceneBroadcaster">
     </plugin>
     <plugin
-      filename="gz-sim-apply-link-wrench-system"
-      name="gz::sim::systems::ApplyLinkWrench">
+      filename="gz-sim-sensors-system"
+      name="gz::sim::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+    <plugin
+      filename="gz-sim-dvl-system"
+      name="gz::sim::systems::DopplerVelocityLogSystem">
     </plugin>
 
     <!-- Origin placed at a tidal energy site -->
@@ -106,27 +109,27 @@
       </uri>
     </include>
 
-    <!-- Heightmap (seafloor at ~-95 m) -->
+    <!-- Heightmap (seafloor at ~-15 m) -->
     <include>
       <uri>https://fuel.gazebosim.org/1.0/hmoyen/models/Sand Heightmap</uri>
-      <pose>0 0 -95 0 0 0</pose>
+      <pose>0 0 -15 0 0 0</pose>
     </include>
 
     <!-- Tidal turbine models positioned on the seafloor -->
     <include>
       <uri>model://Base</uri>
       <name>Base</name>
-      <pose>0 0 -87 1.5708 0 0</pose>
+      <pose>15 0 -15 1.5708 0 1.5708</pose>
     </include>
     <include>
       <uri>model://Blades</uri>
       <name>Blades</name>
-      <pose>0 0 -87 1.5708 0 0</pose>
+      <pose>15 0 -15 1.5708 0 1.5708</pose>
     </include>
     <include>
       <uri>model://Nacelle</uri>
       <name>Nacelle</name>
-      <pose>0 0 -87 1.5708 0 0</pose>
+      <pose>15 0 -15 1.5708 0 1.5708</pose>
     </include>
 
     <plugin
@@ -141,97 +144,6 @@
       </graded_buoyancy>
     </plugin>
 
-    <plugin filename="OceanCurrentWorldPlugin" name="dave_gz_world_plugins::OceanCurrentWorldPlugin">
-      <namespace>hydrodynamics</namespace>
-      <constant_current>
-        <use_constant_current>true</use_constant_current>
-        <topic>ocean_current</topic>
-        <velocity>
-          <mean>2</mean>
-          <min>0</min>
-          <max>5</max>
-          <mu>0.0</mu>
-          <noiseAmp>0.0</noiseAmp>
-        </velocity>
-
-        <horizontal_angle>
-          <mean>1</mean>
-          <min>-3.141592653589793238</min>
-          <max>3.141592653589793238</max>
-          <mu>0.0</mu>
-          <noiseAmp>0.0</noiseAmp>
-        </horizontal_angle>
-
-        <vertical_angle>
-          <mean>1.2</mean>
-          <min>-3.141592653589793238</min>
-          <max>3.141592653589793238</max>
-          <mu>0.0</mu>
-          <noiseAmp>0.0</noiseAmp>
-        </vertical_angle>
-      </constant_current>
-
-      <transient_current>
-        <topic_stratified>stratified_current_velocity</topic_stratified>
-        <!-- Database tag can accept full path or filename for .csv within the dave_worlds/worlds
-        folder  -->
-        <databasefileName>transientOceanCurrentDatabase.csv</databasefileName>
-      </transient_current>
-
-      <!-- transient current database CSV file (North direction value) is used as a depth variation -->
-      <tidal_oscillation>
-        <!-- Method 1: database file
-        https://tidesandcurrents.noaa.gov/noaacurrents/Annual?id=ACT1951_1 -->
-        <!-- Database tag can accept full path or filename for .csv within the dave_worlds/worlds
-        folder  -->
-        <!-- <databasefilePath>ACT1951_1_Annual_2021.csv</databasefilePath> -->
-
-        <!-- Method 2: harmonic constituents from -->
-        <!--
-        https://tidesandcurrents.noaa.gov/harcon.html?unit=0&timezone=0&id=8447685&name=Chappaquoit+Point&state=MA -->
-        <!-- Harmonic Constituents calculated in meters and GMT -->
-        <!-- default unit for speed is deg/hour, phase is in degrees, amplitude in meters -->
-        <!-- M2: Principal Lunar semidiurnal constituent -->
-        <!-- S2: Principal solar semidurnal constituent -->
-        <!-- N2: Larger lunar elliptic semidurnal constituent -->
-        <!-- <harmonic_constituents>
-          <M2>
-            <amp>0.55</amp>
-            <phase>7.2</phase>
-            <speed>28.984104</speed>
-          </M2>
-          <S2>
-            <amp>0.114</amp>
-            <phase>28.8</phase>
-            <speed>30.0</speed>
-          </S2>
-          <N2>
-            <amp>0.14</amp>
-            <phase>351.6</phase>
-            <speed>28.43973</speed>
-          </N2>
-        </harmonic_constituents> -->
-
-        <!-- Mean direction of the tidal currents  -->
-        <mean_direction>
-          <ebb>69</ebb>
-          <flood>255</flood>
-        </mean_direction>
-
-        <!-- Starting time of the simulator in GMT  -->
-        <world_start_time_GMT>
-          <day>9</day>
-          <month>9</month>
-          <year>2024</year>
-          <hour>15</hour>
-          <minute>0</minute>
-        </world_start_time_GMT>
-      </tidal_oscillation>
-    </plugin>
-
-    <plugin filename="OceanCurrentPlugin" name="dave_ros_gz_plugins::OceanCurrentPlugin">
-      <namespace>hydrodynamics</namespace>
-    </plugin>
 
   </world>
 </sdf>
