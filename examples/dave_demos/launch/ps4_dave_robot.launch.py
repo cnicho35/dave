@@ -1,137 +1,45 @@
 import os
 
 from launch import LaunchDescription
-from launch.actions import (
-    DeclareLaunchArgument,
-    IncludeLaunchDescription,
-    OpaqueFunction,
-    SetEnvironmentVariable,
-)
+from launch.actions import IncludeLaunchDescription, SetEnvironmentVariable
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
+from launch.substitutions import PathJoinSubstitution
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
+_ARDUSUB_WS = "/opt/ardusub_ws"
 
-def launch_setup(context, *args, **kwargs):
-    # PS4 controller joy node - reads the gamepad and publishes sensor_msgs/Joy
-    # to /joy, which is the topic consumed by ardusub_manual_control.py to drive
-    # the bluerov2 via MAVROS ManualControl messages.
+
+def generate_launch_description():
+    env_vars = [
+        SetEnvironmentVariable("PATH", f"{_ARDUSUB_WS}/ardupilot/build/sitl/bin:{os.getenv('PATH', '')}"),
+        SetEnvironmentVariable("GZ_SIM_SYSTEM_PLUGIN_PATH", f"{_ARDUSUB_WS}/ardupilot_gazebo/build:{os.getenv('GZ_SIM_SYSTEM_PLUGIN_PATH', '')}"),
+        SetEnvironmentVariable("GZ_SIM_RESOURCE_PATH", f"{_ARDUSUB_WS}/ardupilot_gazebo/models:{_ARDUSUB_WS}/ardupilot_gazebo/worlds:{os.getenv('GZ_SIM_RESOURCE_PATH', '')}"),
+    ]
+
     joy_node = Node(
         package="joy",
         executable="joy_node",
         name="ps4_controller",
-        parameters=[
-            {
-                "device_id": 0,
-                "deadzone": 0.05,
-                "autorepeat_rate": 20.0,
-            }
-        ],
+        parameters=[{"device_id": 0, "deadzone": 0.05, "autorepeat_rate": 20.0}],
         output="screen",
     )
 
-    # Include the main dave_robot launch file with PS4-specific defaults.
-    # use_web_joystick is disabled because the real PS4 controller is used instead.
     dave_robot_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            [
-                PathJoinSubstitution(
-                    [
-                        FindPackageShare("dave_demos"),
-                        "launch",
-                        "dave_robot.launch.py",
-                    ]
-                )
-            ]
+            PathJoinSubstitution([FindPackageShare("dave_demos"), "launch", "dave_robot.launch.py"])
         ),
         launch_arguments={
-            "z": LaunchConfiguration("z"),
-            "namespace": LaunchConfiguration("namespace"),
-            "world_name": LaunchConfiguration("world_name"),
-            "paused": LaunchConfiguration("paused"),
-            "open_virtual_joystick": LaunchConfiguration("open_virtual_joystick"),
-            "open_qgc": LaunchConfiguration("open_qgc"),
+            "z": "-0.5",
+            "namespace": "bluerov2",
+            "world_name": "dave_ocean_waves",
+            "paused": "false",
+            "open_virtual_joystick": "false",
+            "open_qgc": "false",
+            "use_teleop": "true",
             "use_web_joystick": "false",
         }.items(),
     )
 
-    return [joy_node, dave_robot_launch]
+    return LaunchDescription(env_vars + [joy_node, dave_robot_launch])
 
-
-def generate_launch_description():
-    # Prepend ardupilot_gazebo build dir so libArduPilotPlugin.so is found by Gazebo.
-    # These mirror the exports recommended in extras/ardusub-ubuntu-install-local.sh.
-            # Log what we're setting for debugging
-
-        # Set environment variable for the rest of this launch context
-        
-    set_exec_path =     SetEnvironmentVariable(
-            name='PATH',
-            value=f"/opt/ardusub_ws/ardupilot/build/sitl/bin:{os.getenv('PATH', '')}"
-        )
-    set_resource_path_plugins = SetEnvironmentVariable(
-            name='GZ_SIM_SYSTEM_PLUGIN_PATH',
-            value=f"/opt/ardusub_ws/ardupilot_gazebo/build:{os.getenv('GZ_SIM_SYSTEM_PLUGIN_PATH', '')}"
-        )
-    set_resource_path = SetEnvironmentVariable(
-        name="GZ_SIM_RESOURCE_PATH",
-        value=(
-            f"/opt/ardusub_ws/ardupilot_gazebo/models"
-            f":/opt/ardusub_ws/ardupilot_gazebo/worlds"
-            f":{os.getenv('GZ_SIM_RESOURCE_PATH', '')}"
-        )
-)
-
-    
-
-
-
-    args = [
-        DeclareLaunchArgument(
-            "z",
-            default_value="-0.5",
-            description="Initial z position of the bluerov2",
-        ),
-        DeclareLaunchArgument(
-            "namespace",
-            default_value="bluerov2",
-            description="Robot namespace",
-        ),
-        DeclareLaunchArgument(
-            "world_name",
-            default_value="dave_ocean_waves",
-            description="Gazebo world file to launch",
-        ),
-        DeclareLaunchArgument(
-            "paused",
-            default_value="false",
-            description="Start the simulation paused",
-        ),
-        DeclareLaunchArgument(
-            "open_virtual_joystick",
-            default_value="false",
-            description="Open the virtual joystick page in Firefox",
-        ),
-        DeclareLaunchArgument(
-            "use_web_joystick",
-            default_value="false",
-            description="",
-        ),
-       DeclareLaunchArgument(
-            "use_teleop",
-            default_value="true",
-            description="",
-        ),
-        DeclareLaunchArgument(
-            "open_qgc",
-            default_value="false",
-            description="Launch QGroundControl",
-        ),
-    ]
-
-    return LaunchDescription(
-        [set_exec_path,set_resource_path,set_resource_path_plugins]
-        + args
-        + [OpaqueFunction(function=launch_setup)]
-    )
