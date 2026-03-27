@@ -6,3 +6,14 @@
 Documentation is currently at [http://dave-ros2.notion.site](http://dave-ros2.notion.site)
 
 For contribution, do `pip3 install pre-commit && pre-commit install && pre-commit run --all-files` before commit.
+
+
+## Casey Nichols edits:
+
+- Must run extras/ardusub-ubuntu-install.sh
+
+One line start
+
+```bash
+colcon build && source install/setup.bash && ros2 launch dave_demos ps4_dave_robot.launch.py 
+```

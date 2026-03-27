@@ -1,0 +1,23 @@
+<?xml version="1.0" ?>
+<sdf version="1.8">
+  <model name="blades">
+    <static>true</static>
+    <pose>0 0 1 1.5708 0 0</pose>
+    <link name="link">
+      <visual name="visual">
+        <geometry>
+          <mesh>
+            <uri>model://Blades/meshes/TidalTurbine_Blades.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <collision name="collision">
+        <geometry>
+          <mesh>
+            <uri>model://Blades/meshes/TidalTurbine_Blades.dae</uri>
+          </mesh>
+        </geometry>
+      </collision>
+    </link>
+  </model>
+</sdf>

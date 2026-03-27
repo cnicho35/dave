@@ -11,8 +11,9 @@ from std_msgs.msg import Bool
 
 AXIS_SWAY = 0
 AXIS_FWD = 1
-AXIS_YAW = 4
-AXIS_HEAVE = 5
+AXIS_YAW = 3
+AXIS_HEAVE_POS = 5
+AXIS_HEAVE_NEG = 2
 
 BTN_Z_HOLD_OFF = 0
 BTN_SCALE_UP = 1
@@ -22,6 +23,7 @@ BTN_ARM_OFF = 8
 BTN_ARM_ON = 9
 
 DEADZONE = 0.08
+DEADZONE_YAW = 0.20
 DEADZONE_HEAVE = 0.18
 RATE_HZ = 20.0
 TIMEOUT_SEC = 0.3
@@ -34,6 +36,10 @@ THROTTLE_RANGE = 500.0
 
 THROTTLE_LEVELS = [0.25, 0.50, 0.75, 1.00]
 THROTTLE_DEFAULT_INDEX = 1
+
+# Delay (seconds) after MAVROS connects before attempting auto-arm.
+# Gives the EKF time to initialise its origin.
+AUTO_ARM_DELAY_SEC = 5.0
 
 
 def dz(value, deadzone):
@@ -63,6 +69,7 @@ class ArduSubManualControl(Node):
         self.declare_parameter("joystick_topic", "/joy")
         self.declare_parameter("keyboard_topic", "/keyboard/joy")
         self.declare_parameter("mavros_namespace", "mavros")
+        self.declare_parameter("auto_arm", True)
 
         self.model_name = (
             self.get_parameter("model_name").get_parameter_value().string_value or "bluerov2"
@@ -73,6 +80,9 @@ class ArduSubManualControl(Node):
         self.keyboard_topic = (
             self.get_parameter("keyboard_topic").get_parameter_value().string_value
             or "/keyboard/joy"
+        )
+        self._auto_arm_enabled = (
+            self.get_parameter("auto_arm").get_parameter_value().bool_value
         )
 
         mavros_namespace = (
@@ -137,6 +147,9 @@ class ArduSubManualControl(Node):
         self._mode_future = None
         self._arm_future = None
 
+        self._auto_arm_timer = None
+        self._auto_arm_done = False
+
         self._publish_armed_state()
         self.timer = self.create_timer(1.0 / RATE_HZ, self.tick)
 
@@ -144,7 +157,7 @@ class ArduSubManualControl(Node):
             "ardusub_manual_control started | "
             f"model={self.model_name}, joy={self.joystick_topic}, "
             f"keyboard={self.keyboard_topic}, mavros_ns={mavros_ns or '/'} | "
-            "mode control: external/QGC respected (no forced STABILIZE)"
+            f"auto_arm={'enabled' if self._auto_arm_enabled else 'disabled'}"
         )
 
     def cb_joy(self, msg):
@@ -164,20 +177,48 @@ class ArduSubManualControl(Node):
 
         if self.connected and not was_connected:
             self.get_logger().info("MAVROS connected to ArduSub")
+            if self._auto_arm_enabled and not self._auto_arm_done:
+                self.get_logger().info(
+                    f"Auto-arm scheduled in {AUTO_ARM_DELAY_SEC:.0f} s "
+                    "(waiting for EKF to initialise)"
+                )
+                self._auto_arm_timer = self.create_timer(
+                    AUTO_ARM_DELAY_SEC, self._try_auto_arm
+                )
+
         if previous_mode != self.current_mode and self.current_mode:
             self.get_logger().info(f"ArduSub mode: {self.current_mode}")
         if previous_armed != self.armed:
             self.get_logger().info("ArduSub armed" if self.armed else "ArduSub disarmed")
+            if self.armed:
+                self._auto_arm_done = True
 
         self._publish_armed_state()
 
-    def _update_input_state(self, source, msg):
-        state = self.input_state[source]
-        state["axes"] = list(msg.axes)
-        state["buttons"] = list(msg.buttons)
+    def _try_auto_arm(self):
+        # One-shot: cancel the timer immediately.
+        if self._auto_arm_timer is not None:
+            self._auto_arm_timer.cancel()
+            self._auto_arm_timer = None
 
-        if any(abs(axis) > 1e-6 for axis in state["axes"]) or any(state["buttons"]):
-            state["activity_time"] = self.get_clock().now()
+        if self._auto_arm_done or self.armed:
+            return
+
+        if not self.connected:
+            self.get_logger().warn("Auto-arm: MAVROS not connected, skipping")
+            return
+
+        self.get_logger().info("Auto-arm: sending arm command and requesting STABILIZE mode")
+        self._call_arm(True)
+        self._call_set_mode(STABILIZE_MODE)
+    def _update_input_state(self, source, msg):
+            state = self.input_state[source]
+            state["axes"] = list(msg.axes)
+            state["buttons"] = list(msg.buttons)
+
+            if any(abs(axis) > 1e-6 for axis in state["axes"]) or any(state["buttons"]):
+                state["activity_time"] = self.get_clock().now()
+
 
     def _select_active_input(self):
         now = self.get_clock().now()
@@ -344,10 +385,19 @@ class ArduSubManualControl(Node):
         sway *= self.throttle_scale
 
         heave = THROTTLE_NEUTRAL
-        heave += -dz(self._get_axis(AXIS_HEAVE), DEADZONE_HEAVE) * THROTTLE_RANGE
+        # PS4 triggers rest at -1.0 (not 0.0); remap [-1, 1] → [0, 1] so that
+        # an untouched trigger produces exactly THROTTLE_NEUTRAL (500).
+        raw_heave_pos = self._get_axis(AXIS_HEAVE_POS) + 1
+        raw_heave_neg = self._get_axis(AXIS_HEAVE_NEG) + 1 
+        remapped_heave = (raw_heave_pos + -raw_heave_neg) / 2.0  # 0.0 at rest, 1.0 fully pressed
+        heave += -dz(remapped_heave , DEADZONE_HEAVE)* THROTTLE_RANGE
 
-        yaw = -dz(self._get_axis(AXIS_YAW), DEADZONE) * MAX_MANUAL
+        # Use a wider deadzone for yaw and force neutral until armed so that
+        # ArduSub's "RC4 is not neutral" pre-arm check always passes.
+        yaw = -dz(self._get_axis(AXIS_YAW), DEADZONE_YAW) * MAX_MANUAL
         yaw *= self.throttle_scale
+        if not self.armed:
+            yaw = 0.0
 
         self._publish_manual(
             clamp(forward, -MAX_MANUAL, MAX_MANUAL),
