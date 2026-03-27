@@ -1,29 +1,22 @@
+import os
+
 from launch import LaunchDescription
 from launch.actions import (
-    SetEnvironmentVariable,
     DeclareLaunchArgument,
     IncludeLaunchDescription,
     OpaqueFunction,
+    SetEnvironmentVariable,
 )
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import EnvironmentVariable, LaunchConfiguration, PathJoinSubstitution
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
-import os
-
 
 def launch_setup(context, *args, **kwargs):
-    # PS4 controller joy node – reads the gamepad and publishes sensor_msgs/Joy
+    # PS4 controller joy node - reads the gamepad and publishes sensor_msgs/Joy
     # to /joy, which is the topic consumed by ardusub_manual_control.py to drive
     # the bluerov2 via MAVROS ManualControl messages.
-    
-    print("#"*10,"BEGIN ENV CHANGES", "#"*10)
-    print(os.getenv('PATH', ''))
-    print(os.getenv('GZ_SIM_RESOURCE_PATH', ''))
-    print(os.getenv('GZ_SIM_SYSTEM_PLUGIN_PATH', ''))
-    print("#"*10,"END ENV CHANGES", "#"*10)
-    
     joy_node = Node(
         package="joy",
         executable="joy_node",
@@ -67,31 +60,30 @@ def launch_setup(context, *args, **kwargs):
 
 
 def generate_launch_description():
-    # Prepend ardupilot_gazebo build dir so libArduPilotPlugin.so is found by Gazebo.
-    # These mirror the exports recommended in extras/ardusub-ubuntu-install-local.sh.
-            # Log what we're setting for debugging
-
-        # Set environment variable for the rest of this launch context
-        
-    set_exec_path =     SetEnvironmentVariable(
-            name='PATH',
-            value=f"/opt/ardusub_ws/ardupilot/build/sitl/bin:{os.getenv('PATH', '')}"
-        )
-    set_resource_path_plugins = SetEnvironmentVariable(
-            name='GZ_SIM_SYSTEM_PLUGIN_PATH',
-            value=f"/opt/ardusub_ws/ardupilot_gazebo/build:{os.getenv('GZ_SIM_SYSTEM_PLUGIN_PATH', '')}"
-        )
-    set_resource_path_models = SetEnvironmentVariable(
-            name='GZ_SIM_RESOURCE_PATH',
-            value=f"/opt/ardusub_ws/ardupilot_gazebo/models:{os.getenv('GZ_SIM_RESOURCE_PATH', '')}"
-        )
-    set_resource_path_worlds = SetEnvironmentVariable(
-            name='GZ_SIM_RESOURCE_PATH',
-            value=f"/opt/ardusub_ws/ardupilot_gazebo/worlds:{os.getenv('GZ_SIM_RESOURCE_PATH', '')}"
-        )
-    
-
-
+    # Prepend ardupilot_gazebo paths so Gazebo finds libArduPilotPlugin.so (build dir),
+    # the BlueROV2 mesh resources (models dir), and the ocean shader assets (worlds dir).
+    set_exec_path = SetEnvironmentVariable(
+        name="PATH",
+        value=f"/opt/ardusub_ws/ardupilot/build/sitl/bin:{os.getenv('PATH', '')}",
+    )
+    set_plugin_path = SetEnvironmentVariable(
+        name="GZ_SIM_SYSTEM_PLUGIN_PATH",
+        value=f"/opt/ardusub_ws/ardupilot_gazebo/build:{os.getenv('GZ_SIM_SYSTEM_PLUGIN_PATH', '')}",
+    )
+    # Both models and worlds must be in a single assignment; two separate
+    # SetEnvironmentVariable calls for the same variable each read the original
+    # os.getenv() value (captured at import time) so the second one would
+    # silently overwrite the first - causing the worlds path to be dropped and
+    # the ShaderParam ocean-surface plugin to fail, leaving the BlueROV2 hidden
+    # beneath an opaque water surface.
+    set_resource_path = SetEnvironmentVariable(
+        name="GZ_SIM_RESOURCE_PATH",
+        value=(
+            f"/opt/ardusub_ws/ardupilot_gazebo/models"
+            f":/opt/ardusub_ws/ardupilot_gazebo/worlds"
+            f":{os.getenv('GZ_SIM_RESOURCE_PATH', '')}"
+        ),
+    )
 
     args = [
         DeclareLaunchArgument(
@@ -127,7 +119,7 @@ def generate_launch_description():
     ]
 
     return LaunchDescription(
-        [set_exec_path,set_resource_path_worlds,set_resource_path_plugins, set_resource_path_models]
+        [set_exec_path, set_plugin_path, set_resource_path]
         + args
         + [OpaqueFunction(function=launch_setup)]
     )
