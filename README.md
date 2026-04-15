@@ -22,3 +22,6 @@ colcon build && source install/setup.bash && ros2 launch dave_demos ps4_dave_rob
 ## References
 
 Marine Energy models were designed by IKM 3D [https://www.ikm3d.com/] for ReDi Island [https://www.nlr.gov/water/redi-island].
+
+DAVE Simulation:
+Mabel M. Zhang, Woen-Sug Choi, Jessica Herman, Duane Davis, Carson Vogt, Michael McCarrin, Yadunund Vijay, Dharini Dutia, William Lew, Steven Peters, and Brian Bingham, "DAVE Aquatic Virtual Environment: Toward a General Underwater Robotics Simulator," in IEEE/OES Autonomous Underwater Vehicle (AUV) Symposium, 2022. doi: https://doi.org/10.1109/AUV53081.2022.9965808

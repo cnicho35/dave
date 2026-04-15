@@ -74,8 +74,8 @@
             <height>480</height>
           </image>
           <clip>
-            <near>0.1</near>
-            <far>10.0</far>
+            <near>0.5</near>
+            <far>1000.0</far>
           </clip>
         </camera>
       </sensor>

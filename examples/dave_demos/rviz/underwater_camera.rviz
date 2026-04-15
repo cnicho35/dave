@@ -1,13 +1,13 @@
 Panels:
   - Class: rviz_common/Displays
-    Help Height: 78
+    Help Height: 0
     Name: Displays
     Property Tree Widget:
       Expanded:
         - /Camera1
         - /Camera1/Topic1
       Splitter Ratio: 0.5
-    Tree Height: 300
+    Tree Height: 176
   - Class: rviz_common/Views
     Expanded:
       - /Current View1
@@ -17,7 +17,7 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: Camera
+    SyncSource: ""
 Visualization Manager:
   Class: ""
   Displays:
@@ -54,19 +54,38 @@ Visualization Manager:
     Current:
       Class: rviz_default_plugins/Orbit
       Distance: 10
+      Enable Stereo Rendering:
+        Stereo Eye Separation: 0.05999999865889549
+        Stereo Focal Distance: 1
+        Swap Stereo Eyes: false
+        Value: false
       Focal Point:
         X: 0
         Y: 0
         Z: 0
+      Focal Shape Fixed Size: true
+      Focal Shape Size: 0.05000000074505806
+      Invert Z Axis: false
       Name: Current View
+      Near Clip Distance: 0.009999999776482582
+      Pitch: 0.7853981852531433
+      Target Frame: <Fixed Frame>
       Value: Orbit (rviz_default_plugins)
+      Yaw: 0.7853981852531433
     Saved: ~
 Window Geometry:
   Camera:
     collapsed: false
   Displays:
     collapsed: false
-  Height: 600
-  Width: 800
-  X: 0
-  Y: 0
+  Height: 895
+  Hide Left Dock: false
+  Hide Right Dock: false
+  QMainWindow State: 000000ff00000000fd00000001000000000000049600000348fc0200000004fb0000000c00430061006d0065007200610100000018000003480000001700fffffffb000000100044006900730070006c0061007900730000000270000000f0000000cc00fffffffb0000000a0056006900650077007302000004940000020c000004430000025efb0000000800540069006d00650000000300000000600000003c00ffffff000000340000034800000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730000000000ffffffff0000000000000000
+  Time:
+    collapsed: false
+  Views:
+    collapsed: false
+  Width: 1232
+  X: 665
+  Y: 171
