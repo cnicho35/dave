@@ -17,3 +17,8 @@ One line start
 ```bash
 colcon build && source install/setup.bash && ros2 launch dave_demos ps4_dave_robot.launch.py 
 ```
+
+
+## References
+
+Marine Energy models were designed by IKM 3D [https://www.ikm3d.com/] for ReDi Island [https://www.nlr.gov/water/redi-island].
