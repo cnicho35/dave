@@ -4,7 +4,7 @@ project(dave_demos)
 find_package(ament_cmake REQUIRED)
 
 install(
-  DIRECTORY launch
+  DIRECTORY launch rviz
   DESTINATION share/dave_demos
 )
 
