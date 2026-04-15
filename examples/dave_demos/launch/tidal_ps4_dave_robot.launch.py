@@ -68,5 +68,17 @@ def generate_launch_description():
         for model, pose in _TURBINE_COMPONENTS.items()
     ]
 
-    return LaunchDescription(env_vars + [joy_node, dave_robot_launch] + turbine_launches)
+    rviz_config = PathJoinSubstitution(
+        [FindPackageShare("dave_demos"), "rviz", "underwater_camera.rviz"]
+    )
+
+    rviz_node = Node(
+        package="rviz2",
+        executable="rviz2",
+        name="rviz2",
+        arguments=["-d", rviz_config],
+        output="screen",
+    )
+
+    return LaunchDescription([*env_vars, joy_node, dave_robot_launch, *turbine_launches, rviz_node])
 
