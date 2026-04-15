@@ -115,23 +115,6 @@
       <pose>0 0 -15 0 0 0</pose>
     </include>
 
-    <!-- Tidal turbine models positioned on the seafloor -->
-    <include>
-      <uri>model://Base</uri>
-      <name>Base</name>
-      <pose>15 0 -15 1.5708 0 1.5708</pose>
-    </include>
-    <include>
-      <uri>model://Blades</uri>
-      <name>Blades</name>
-      <pose>15 0 -15 1.5708 0 1.5708</pose>
-    </include>
-    <include>
-      <uri>model://Nacelle</uri>
-      <name>Nacelle</name>
-      <pose>15 0 -15 1.5708 0 1.5708</pose>
-    </include>
-
     <plugin
       filename="gz-sim-buoyancy-system"
       name="gz::sim::systems::Buoyancy">

@@ -10,7 +10,7 @@ from launch_ros.actions import Node
 def generate_launch_description():
     gui = LaunchConfiguration("gui")
     use_sim_time = LaunchConfiguration("use_sim_time")
-    namespace = LaunchConfiguration("namespace")
+    model_name = LaunchConfiguration("model_name")
     x = LaunchConfiguration("x")
     y = LaunchConfiguration("y")
     z = LaunchConfiguration("z")
@@ -31,9 +31,9 @@ def generate_launch_description():
             description="Flag to indicate whether to use sim time",
         ),
         DeclareLaunchArgument(
-            "namespace",
-            default_value="",
-            description="Namespace",
+            "model_name",
+            description="Name of the marine energy model to spawn (must match a subdirectory "
+            "under description/, e.g. Base, Blades, Nacelle)",
         ),
         DeclareLaunchArgument(
             "x",
@@ -76,7 +76,7 @@ def generate_launch_description():
         [
             FindPackageShare("marine_energy_models"),
             "description",
-            namespace,
+            model_name,
             "model.sdf",
         ]
     )
@@ -105,7 +105,7 @@ def generate_launch_description():
         executable="create",
         arguments=[
             "-name",
-            namespace,
+            model_name,
             "-file",
             description_file,
             "-x",

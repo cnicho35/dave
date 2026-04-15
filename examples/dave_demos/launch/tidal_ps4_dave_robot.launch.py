@@ -9,6 +9,13 @@ from launch_ros.substitutions import FindPackageShare
 
 _ARDUSUB_WS = "/opt/ardusub_ws"
 
+# Turbine components: model name → (x, y, z, roll, pitch, yaw)
+_TURBINE_COMPONENTS = {
+    "Base": ("15", "0", "-15", "1.5708", "0", "1.5708"),
+    "Blades": ("15", "0", "-15", "1.5708", "0", "1.5708"),
+    "Nacelle": ("15", "0", "-15", "1.5708", "0", "1.5708"),
+}
+
 
 def generate_launch_description():
     env_vars = [
@@ -40,12 +47,26 @@ def generate_launch_description():
             "use_web_joystick": "false",
         }.items(),
     )
-    
-    marine_energy_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            PathJoinSubstitution([FindPackageShare("marine_energy_models"), "launch", "upload_object.launch.py"])
-        )
-    )
 
-    return LaunchDescription(env_vars + [joy_node, dave_robot_launch, marine_energy_launch])
+    turbine_launches = [
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(
+                PathJoinSubstitution(
+                    [FindPackageShare("marine_energy_models"), "launch", "upload_object.launch.py"]
+                )
+            ),
+            launch_arguments={
+                "model_name": model,
+                "x": pose[0],
+                "y": pose[1],
+                "z": pose[2],
+                "roll": pose[3],
+                "pitch": pose[4],
+                "yaw": pose[5],
+            }.items(),
+        )
+        for model, pose in _TURBINE_COMPONENTS.items()
+    ]
+
+    return LaunchDescription(env_vars + [joy_node, dave_robot_launch] + turbine_launches)
 
