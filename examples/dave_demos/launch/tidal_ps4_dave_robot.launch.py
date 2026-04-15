@@ -32,7 +32,7 @@ def generate_launch_description():
         launch_arguments={
             "z": "-0.5",
             "namespace": "bluerov2",
-            "world_name": "dave_tidal_energy",
+            "world_name": "marine_energy_tidal",
             "paused": "false",
             "open_virtual_joystick": "false",
             "open_qgc": "false",
@@ -40,6 +40,12 @@ def generate_launch_description():
             "use_web_joystick": "false",
         }.items(),
     )
+    
+    marine_energy_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            PathJoinSubstitution([FindPackageShare("marine_energy_models"), "launch", "upload_object.launch.py"])
+        )
+    )
 
-    return LaunchDescription(env_vars + [joy_node, dave_robot_launch])
+    return LaunchDescription(env_vars + [joy_node, dave_robot_launch, marine_energy_launch])
 

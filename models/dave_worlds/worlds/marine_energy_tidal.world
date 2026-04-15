@@ -17,7 +17,7 @@
 <!-- Combined tidal energy world: ocean current plugin environment with tidal turbine models -->
 
 <sdf version="1.8">
-  <world name="dave_tidal_energy">
+  <world name="marine_energy_tidal">
     <scene>
       <ambient>0.01 0.01 0.01 1.0</ambient>
       <sky>
