@@ -388,7 +388,10 @@ class ArduSubManualControl(Node):
         # PS4 triggers rest at -1.0 (not 0.0); remap [-1, 1] → [0, 1] so that
         # an untouched trigger produces exactly THROTTLE_NEUTRAL (500).
         raw_heave_pos = self._get_axis(AXIS_HEAVE_POS) + 1
-        raw_heave_neg = self._get_axis(AXIS_HEAVE_NEG) + 1 
+        # Axis 2 (L2) polarity is reversed on some PS4 controllers, so its
+        # raw value is negated before applying the same [-1, 1] -> [0, 2]
+        # remap used for axis 5.
+        raw_heave_neg = -self._get_axis(AXIS_HEAVE_NEG) + 1
         remapped_heave = (raw_heave_pos + -raw_heave_neg) / 2.0  # 0.0 at rest, 1.0 fully pressed
         heave += -dz(remapped_heave , DEADZONE_HEAVE)* THROTTLE_RANGE
 
