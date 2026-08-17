@@ -7,7 +7,7 @@ from launch.substitutions import PathJoinSubstitution
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
-_ARDUSUB_WS = "/opt/ardusub_ws"
+_ARDUSUB_WS = "/home/comet/ardusub_ws"
 
 # Turbine components: model name → (x, y, z, roll, pitch, yaw)
 _TURBINE_COMPONENTS = {
