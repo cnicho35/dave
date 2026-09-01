@@ -53,3 +53,6 @@ log/
 install/
 logs/
 eeprom.bin
+
+# docs
+docs/docs/
