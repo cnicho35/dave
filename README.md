@@ -15,7 +15,7 @@ For contribution, do `pip3 install pre-commit && pre-commit install && pre-commi
 One line start
 
 ```bash
-colcon build && source install/setup.bash && ros2 launch dave_demos ps4_dave_robot.launch.py 
+colcon build && source install/setup.bash && ros2 launch dave_demos tidal_ps4_dave_robot.launch.py 
 ```
 
 
