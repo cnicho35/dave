@@ -19,6 +19,9 @@ Run the `source` command again in each new terminal that will use packages from 
 
 ## Start The PS4 Controller Scenario
 
+This tutorial assumes you have completed the setup steps and are ready to launch the simulation with the PS4 controller.
+![](images/controller.jpg#center)
+
 Connect the controller before launching. Then run:
 
 ```bash
