@@ -45,6 +45,14 @@ Use the Gazebo camera to orient yourself, then use the configured RViz view to i
 
 Press `Ctrl+C` in the terminal that started the launch. This stops the ROS 2 processes and closes the simulation components they started.
 
+## Example Inspection Video
+
+Here is an example video showing the inspection of the TEC using the BlueROV2 in the simulated environment:
+
+<video width="2048" height="1152" controls>
+  <source src="../video/inspection_video.mp4" type="video/mp4">
+</video>
+
 ## Next Steps
 
 Follow [Operate the BlueROV](marine_energy_world.md) for a guided inspection activity, or use [Troubleshooting First Launch](troubleshooting.md) if the scenario does not start as expected.
