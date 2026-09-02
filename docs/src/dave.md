@@ -1,1 +1,6 @@
-The dave documentation can be found here: https://dave-ros2.notion.site
+DAVE Aquatic Virtual Environment (DAVE) is a software package developed originally by the Naval Postgraduate School and shared publicly as open-source and open for community use. The original software package was developed for ROS1 and an older version of Gazebo that is now difficult to use. To move this software forward and update it for the latest versions of ROS (ROS2) and Gazebo, the Intelligent Ocean Engineering Systems Lab (IOES) at Korea Maritime \& Ocean University (KMOU) started a new fork of this software.
+
+The software uses Gazebo and ROS2 to spawn a robotics system in an aquatic environment. Gazebo includes several packages that enable realistic physics that a robotic system would experience in the ocean. ROS2 is utilized to include a realistic robot in this environment and simulate the actual software, controls and logistics needed to run a robotic system. 
+
+We highly recommend reviewing the official documentation to understand the full capabilities and setup instructions for DAVE.    
+The DAVE documentation (for ROS2) can be found here: [DAVE Documentation](https://dave-ros2.notion.site)

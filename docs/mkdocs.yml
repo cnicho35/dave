@@ -3,11 +3,23 @@ docs_dir: 'src'
 site_dir: 'docs'
 nav:
   - Home: 'index.md'
-  - DAVE: 'dave.md'
-  - Marine Energy World: 'marine_energy_world.md'
-  - Challenges: 'challenges.md'
-  - About: 'about.md'
-  - Useful Links: 'links.md'
+  - Learn:
+    - Install and Verify: 'getting_started.md'
+    - First Marine Energy Simulation: 'first_simulation.md'
+    - Understand the Simulation Scene: 'simulation_scene.md'
+  - Operate:
+    - Operate the BlueROV: 'marine_energy_world.md'
+    - Camera Evidence: 'camera_evidence.md'
+    - Training Challenges: 'challenges.md'
+    - Virtual Joystick: 'virtual_joystick.md'
+  - Troubleshoot: 'troubleshooting.md'
+  - Teach and Extend:
+    - Instructor Guide: 'instructor_guide.md'
+    - Customize a Scenario: 'customize_scenario.md'
+  - Background:
+    - DAVE: 'dave.md'
+    - About: 'about.md'
+    - Useful Links: 'links.md'
 markdown_extensions:
   - footnotes
   - toc:

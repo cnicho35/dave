@@ -16,26 +16,27 @@
 
 </a>Design Reference: <a href="https://design.ros2.org" target="_blank">design.ros2.org</a>
 
-</a>Humble Documentation: <a href="https://docs.ros.org/en/humble/index.html#" target="_blank">docs.ros.org</a>  
+Jazzy Documentation: <a href="https://docs.ros.org/en/jazzy/index.html" target="_blank">docs.ros.org</a>
 - See the Tutorials section for helpful ROS2 examples 
 
-</a>Control Documentation: <a href="https://control.ros.org/humble/index.html" target="_blank">control.ros.org/humble/</a>
+Control Documentation: <a href="https://control.ros.org/jazzy/index.html" target="_blank">control.ros.org/jazzy/</a>
 
 <p>Tutorials:</p>
 <ul>
 <li><a href="https://roboticsbackend.com/category/ros2/" target="_blank">roboticsbackend.com/category/ros2/</a>  
 <li><a href="https://app.theconstruct.ai/courses/ros2-basics-in-5-days-humble-c-133/" target="_blank">app.theconstruct.ai/courses/ros2-basics-in-5-days-humble-c-133/</a>
-<p>Note: this course is robotics centric, but the principles discussed are relevent for MODAQ2 development</p> 
+<p>Note: this course uses ROS 2 Humble. Its concepts can supplement this project, but commands and package details should be verified against ROS 2 Jazzy.</p>
 </ul>
 
 ## Gazebo
 
-Coming soon...
+- <a href="https://gazebosim.org/docs/harmonic/" target="_blank">Gazebo Harmonic documentation</a>
+- <a href="https://gazebosim.org/docs/harmonic/ros_installation/" target="_blank">Gazebo Harmonic ROS 2 installation</a>
 
 
 ## Ubuntu
 
-</a>Installing Ubuntu 22.04: <a href="https://ubuntu.com/tutorials/install-ubuntu-desktop#1-overview" target="_blank">ubuntu.com/tutorials/install-ubuntu-desktop</a>
+Installing Ubuntu 24.04 LTS: <a href="https://ubuntu.com/tutorials/install-ubuntu-desktop" target="_blank">ubuntu.com/tutorials/install-ubuntu-desktop</a>
 
 </a>Foxglove GUI software: <a href="https://docs.foxglove.dev/docs/introduction" target="_blank">docs.foxglove.dev/docs/introduction</a>
 
