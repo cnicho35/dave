@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - ros2
+      - gh-pages
   workflow_dispatch:
 
 permissions:
