@@ -1,6 +1,8 @@
 name: Deploy MkDocs
 
 on:
+  pull_request:
+    branches: [ros2]
   push:
     branches:
       - ros2
@@ -17,6 +19,11 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history for gh-pages branch
+
+      - name: Fetch gh-pages branch
+        run: git fetch origin gh-pages --depth=1 || true
 
       - name: Setup micromamba
         uses: mamba-org/setup-micromamba@v2
