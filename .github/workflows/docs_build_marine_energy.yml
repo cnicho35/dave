@@ -1,0 +1,32 @@
+name: Deploy MkDocs
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup micromamba
+        uses: mamba-org/setup-micromamba@v2
+        with:
+          environment-file: docs/mkdocs-env.yaml
+          environment-name: mkdocs-env
+          cache-environment: true
+          init-shell: bash
+
+      - name: Deploy docs
+        shell: bash -l {0}
+        run: |
+          micromamba activate mkdocs-env
+          mkdocs gh-deploy --clean --config-file docs/mkdocs.yaml
