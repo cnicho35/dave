@@ -29,4 +29,4 @@ jobs:
         shell: bash -l {0}
         run: |
           micromamba activate mkdocs-env
-          mkdocs gh-deploy --clean --config-file docs/mkdocs.yaml
+          mkdocs gh-deploy --clean --config-file docs/mkdocs.yml
