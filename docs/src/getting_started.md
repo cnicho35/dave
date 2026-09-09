@@ -31,6 +31,10 @@ The process of installing Ubuntu involves creating a bootable USB drive, booting
 !!! note
     Make sure you install ROS2 Jazzy and Gazebo Harmonic and not any other versions. Using different versions may lead to compatibility issues and unexpected behavior in the Robotics World for Marine Energy.
 
+!!! tip
+    There is a script that installs all the necessary things for running the marine robotics world. It's located at extras/ros-jazzy-gz-harmonic-install.sh 
+    Running this script successfully will ensure you have everything you need on your Ubuntu computer to launch the marine robotics world!
+
 To install ROS2 and Gazebo on Ubuntu, follow the official installation guides:
 
 - [ROS2 Installation Guide](https://docs.ros.org/en/jazzy/Installation.html)
