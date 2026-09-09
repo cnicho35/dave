@@ -1,6 +1,6 @@
 # Robotics World for Marine Energy
 
-Robotics World for Marine Energy is a ROS 2 and Gazebo simulation environment for learning how remotely operated vehicles (ROVs) support marine-energy deployment, operations, maintenance, and decommissioning (DOMD). It uses DAVE to place a BlueROV2 and a tidal energy converter (TEC) in an underwater simulation.
+Robotics World for Marine Energy is a ROS 2 and Gazebo simulation environment for learning how remotely operated vehicles (ROVs) support marine-energy deployment, operations, maintenance, and decommissioning (DOMD). It uses DAVE to place a BlueROV2 and a tidal energy converter (TEC) designed and modeled by [IKM3M for ReDi Island](https://redi.openei.org/#/large-island/) in an underwater simulation.
 
 ## Start Here
 
