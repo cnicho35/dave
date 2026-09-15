@@ -1,0 +1,23 @@
+<?xml version="1.0" ?>
+<sdf version="1.8">
+  <model name="navigationbuoy">
+    <static>true</static>
+    <pose>0 0 5 0 0 0</pose>
+    <link name="link">
+      <visual name="visual">
+        <geometry>
+          <mesh>
+            <uri>model://NavigationBuoy/meshes/NavigationBuoy_Base.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <collision name="collision">
+        <geometry>
+          <mesh>
+            <uri>model://NavigationBuoy/meshes/NavigationBuoy_Base.dae</uri>
+          </mesh>
+        </geometry>
+      </collision>
+    </link>
+  </model>
+</sdf>
