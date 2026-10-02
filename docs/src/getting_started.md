@@ -57,12 +57,18 @@ The repository provides ArduSub installers in `extras/ardusub-ubuntu-install.sh`
 
 ## Cloning the Repository
 
-Create a ROS 2 workspace (if you don't already have one) and clone this repository into its `src` directory:
+Clone the repository into your home directory:
 
 ```bash
-mkdir -p ~/dave_ws/src
-cd ~/dave_ws/src
+cd ~
 git clone https://github.com/cnicho35/dave.git
+```
+
+If you plan to contribute changes, first [fork the repository](https://github.com/cnicho35/dave/fork) on GitHub, then clone your fork instead:
+
+```bash
+cd ~
+git clone https://github.com/<your-username>/dave.git
 ```
 
 ## Build And Verify The Workspace
