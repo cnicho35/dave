@@ -55,6 +55,22 @@ The repository provides ArduSub installers in `extras/ardusub-ubuntu-install.sh`
 !!! warning
     The checked-in PS4 launch file currently expects `/home/comet/ardusub_ws`, while the virtual joystick launch expects `/opt/ardusub_ws`. Confirm the path in the launch file matches your ArduSub installation before launching. This is a local configuration requirement, not an automatic discovery step.
 
+## Cloning the Repository
+
+Clone the repository into your home directory:
+
+```bash
+cd ~
+git clone https://github.com/cnicho35/dave.git
+```
+
+If you plan to contribute changes, first [fork the repository](https://github.com/cnicho35/dave/fork) on GitHub, then clone your fork instead:
+
+```bash
+cd ~
+git clone https://github.com/<your-username>/dave.git
+```
+
 ## Build And Verify The Workspace
 
 From the root of a workspace containing this repository, build and source the overlay:
