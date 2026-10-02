@@ -55,6 +55,16 @@ The repository provides ArduSub installers in `extras/ardusub-ubuntu-install.sh`
 !!! warning
     The checked-in PS4 launch file currently expects `/home/comet/ardusub_ws`, while the virtual joystick launch expects `/opt/ardusub_ws`. Confirm the path in the launch file matches your ArduSub installation before launching. This is a local configuration requirement, not an automatic discovery step.
 
+## Cloning the Repository
+
+Create a ROS 2 workspace (if you don't already have one) and clone this repository into its `src` directory:
+
+```bash
+mkdir -p ~/dave_ws/src
+cd ~/dave_ws/src
+git clone https://github.com/cnicho35/dave.git
+```
+
 ## Build And Verify The Workspace
 
 From the root of a workspace containing this repository, build and source the overlay:
