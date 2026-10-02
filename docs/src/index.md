@@ -6,9 +6,10 @@ Robotics World for Marine Energy is a ROS 2 and Gazebo simulation environment fo
 
 You do not need previous robotics or Python experience to follow the first simulation. You will need Ubuntu 24.04 LTS and enough time to install ROS 2, Gazebo, and the project dependencies.
 
-1. Follow [Install and Verify](getting_started.md) to prepare a supported computer and workspace.
-2. Run [First Marine Energy Simulation](first_simulation.md) to launch the BlueROV2, TEC, Gazebo, and RViz.
-3. Continue to [Operate the BlueROV](marine_energy_world.md) for an inspection exercise.
+1. Visit the repository on [GitHub](https://github.com/cnicho35/dave)
+2. Follow [Install and Verify](getting_started.md) to prepare a supported computer and workspace.
+3. Run [First Marine Energy Simulation](first_simulation.md) to launch the BlueROV2, TEC, Gazebo, and RViz.
+4. Continue to [Operate the BlueROV](marine_energy_world.md) for an inspection exercise.
 
 ## What You Will Learn
 
