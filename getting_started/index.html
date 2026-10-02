@@ -425,6 +425,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#cloning-the-repository" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cloning the Repository
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#build-and-verify-the-workspace" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1052,6 +1063,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#cloning-the-repository" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cloning the Repository
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#build-and-verify-the-workspace" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1145,13 +1167,22 @@ Running this script successfully will ensure you have everything you need on you
 <p class="admonition-title">Warning</p>
 <p>The checked-in PS4 launch file currently expects <code>/home/comet/ardusub_ws</code>, while the virtual joystick launch expects <code>/opt/ardusub_ws</code>. Confirm the path in the launch file matches your ArduSub installation before launching. This is a local configuration requirement, not an automatic discovery step.</p>
 </div>
+<h2 id="cloning-the-repository">Cloning the Repository<a class="headerlink" href="#cloning-the-repository" title="Permanent link">&para;</a></h2>
+<p>Clone the repository into your home directory:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nb">cd</span><span class="w"> </span>~
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/cnicho35/dave.git
+</span></code></pre></div>
+<p>If you plan to contribute changes, first <a href="https://github.com/cnicho35/dave/fork">fork the repository</a> on GitHub, then clone your fork instead:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nb">cd</span><span class="w"> </span>~
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/&lt;your-username&gt;/dave.git
+</span></code></pre></div>
 <h2 id="build-and-verify-the-workspace">Build And Verify The Workspace<a class="headerlink" href="#build-and-verify-the-workspace" title="Permanent link">&para;</a></h2>
 <p>From the root of a workspace containing this repository, build and source the overlay:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>colcon<span class="w"> </span>build
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nb">source</span><span class="w"> </span>install/setup.bash
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>colcon<span class="w"> </span>build
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="nb">source</span><span class="w"> </span>install/setup.bash
 </span></code></pre></div>
 <p>Before moving on, confirm the build completes and ROS 2 can locate the main launch package:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>ros2<span class="w"> </span>pkg<span class="w"> </span>prefix<span class="w"> </span>dave_demos
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>ros2<span class="w"> </span>pkg<span class="w"> </span>prefix<span class="w"> </span>dave_demos
 </span></code></pre></div>
 <p>For the physical-controller path, connect the controller before starting the scenario. For a controller-free option, see <a href="../virtual_joystick/">Virtual Joystick</a>.</p>
 <h2 id="launching-the-robotics-world-for-marine-energy">Launching the Robotics World for Marine Energy<a class="headerlink" href="#launching-the-robotics-world-for-marine-energy" title="Permanent link">&para;</a></h2>
